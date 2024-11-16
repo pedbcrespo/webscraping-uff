@@ -45,9 +45,6 @@ const extractData = async (listData, previousData) => {
 }
 
 const getPreviousData = async (elementList) => {
-
-
-
     const previousUserDataPromise = elementList.map(elem => {
         let term = elem || '';
         if(isNaN(parseFloat(elem))) {
