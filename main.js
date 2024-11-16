@@ -53,7 +53,7 @@ const getPreviousData = async (cpfList) => {
 }
 
 const PreviousUserData = (resData) => {
-    if(!resData || !resData[0].pessoa) return null;
+    if(!resData || resData.length === 0) return null;
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
