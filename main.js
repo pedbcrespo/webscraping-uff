@@ -32,7 +32,6 @@ const extractData = async (listData, previousData) => {
         const tds = Array.from(document.querySelectorAll('#cadastro-pessoal-ALUNO td'));
         return tds.map(td => td.textContent.trim());
     });
-    sleep(2000);
     const userDetails = {};
     data.forEach((info, i) => {
         if(i % 2 == 0)
@@ -57,5 +56,3 @@ const PreviousUserData = (resData) => {
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
