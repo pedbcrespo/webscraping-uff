@@ -7,7 +7,6 @@ export const execute = async (cpfList) => {
     let listData = [];
     const previousList = await getPreviousData(cpfList);
     for (const previousData of previousList) {
-        console.log('GET DATA FROM', previousData);
         try {
             listData = await extractData(listData, previousData);
         }
@@ -29,7 +28,7 @@ const extractData = async (listData, previousData) => {
         const tds = Array.from(document.querySelectorAll('#cadastro-pessoal-ALUNO td'));
         return tds.map(td => td.textContent.trim());
     });
-    sleep(5000);
+    sleep(2000);
     const userDetails = {};
     data.forEach((info, i) => {
         if(i % 2 == 0)
@@ -37,9 +36,6 @@ const extractData = async (listData, previousData) => {
         else
             userDetails[data[i-1]] = info;
     })
-
-    console.log(userDetails)
-
     listData.push(userDetails);
     await browser.close();
     return listData;
@@ -58,5 +54,3 @@ const PreviousUserData = (resData) => {
 };
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-execute(['14754473701']);
