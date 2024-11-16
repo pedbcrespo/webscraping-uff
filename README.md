@@ -2,7 +2,7 @@
 
 Webscraping para coletar dados do site da UFF.
 
-Este projeto utiliza **Axios** para fazer as requisições e **Puppeteer** ou **Selenium** para automatizar o processo de navegação e coleta de dados.
+Este projeto utiliza **Axios** para fazer as requisições e **Puppeteer** para automatizar o processo de navegação e coleta de dados.
 
 ## Como Usar
 
