@@ -6,6 +6,10 @@ const URL_BASE = 'https://app.uff.br/transparencia/busca_cadastro';
 export const execute = async (cpfList) => {
     let listData = [];
     const previousList = await getPreviousData(cpfList);
+    if(previousList.some(data => !data)) {
+        console.error("LISTA COM DADOS INVALIDOS", cpfList)
+        return [];
+    }
     for (const previousData of previousList) {
         try {
             listData = await extractData(listData, previousData);
@@ -49,8 +53,12 @@ const getPreviousData = async (cpfList) => {
 }
 
 const PreviousUserData = (resData) => {
+    if(!resData || !resData[0].pessoa) return null;
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+
+execute(['12345678901'])
