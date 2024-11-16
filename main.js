@@ -1,7 +1,7 @@
 import * as puppeteer from 'puppeteer';
 import axios from "axios";
 
-const URL_BASE = 'https://app.uff.br/transparencia/busca_cadastro';
+const URL_BASE = 'https://app.uff.br/transparencia';
 
 export const execute = async (cpfList) => {
     let listData = [];
@@ -22,7 +22,7 @@ export const execute = async (cpfList) => {
 }
 
 const extractData = async (listData, previousData) => {
-    const url = `https://app.uff.br/transparencia/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
+    const url = `${URL_BASE}/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
 
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
@@ -46,7 +46,7 @@ const extractData = async (listData, previousData) => {
 }
 
 const getPreviousData = async (cpfList) => {
-    const previousUserDataPromise = cpfList.map(cpf => axios.get(`${URL_BASE}.json?term=${cpf}`));
+    const previousUserDataPromise = cpfList.map(cpf => axios.get(`${URL_BASE}/busca_cadastro.json?term=${cpf}`));
     const previousResolvedPromises = await Promise.all(previousUserDataPromise);
     const previousList = previousResolvedPromises.map(res => PreviousUserData(res.data));
     return previousList;
