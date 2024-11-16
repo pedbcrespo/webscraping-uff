@@ -7,6 +7,7 @@ export const execute = async (cpfList) => {
     let listData = [];
     const previousList = await getPreviousData(cpfList);
     for (const previousData of previousList) {
+        console.log('GET DATA FROM', previousData);
         try {
             listData = await extractData(listData, previousData);
         }
@@ -19,9 +20,28 @@ export const execute = async (cpfList) => {
 
 const extractData = async (listData, previousData) => {
     const url = `https://app.uff.br/transparencia/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
+
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(url);
+
+    const data = await page.evaluate(() => {
+        const tds = Array.from(document.querySelectorAll('#cadastro-pessoal-ALUNO td'));
+        return tds.map(td => td.textContent.trim());
+    });
+    sleep(5000);
+    const userDetails = {};
+    data.forEach((info, i) => {
+        if(i % 2 == 0)
+            userDetails[info] = null;
+        else
+            userDetails[data[i-1]] = info;
+    })
+
+    console.log(userDetails)
+
+    listData.push(userDetails);
+    await browser.close();
     return listData;
 }
 
@@ -37,6 +57,6 @@ const PreviousUserData = (resData) => {
     return { cpf, nome, identificacao: ididentificacao };
 };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 execute(['14754473701']);
