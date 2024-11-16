@@ -1,32 +1,28 @@
-import { Builder, Browser, By } from 'selenium-webdriver';
-import axios from 'axios';
+import axios from "axios";
+import * as cheerio from 'cheerio';
 
 const URL_BASE = 'https://app.uff.br/transparencia/busca_cadastro';
 
-const driver = await new Builder()
-    .forBrowser(Browser.CHROME)
-    .build();
-
+const PreviousUserData = (resData) => {
+    const {cpf, nome, identificacao} = resData[0].pessoa;
+    return {cpf, nome, identificacao};
+};
 
 export const execute = async (cpfList) => {
-    try {
-        await driver.get(URL_BASE);
-        for(const cpf of cpfList) {
-            const inputElement = await driver.findElement(By.xpath('//*[@id="busca"]'));
-            inputElement.sendKeys(cpf);
-        }
-    }
-    catch {
-        console.error(`ERRO AO ACESSAR A URL: '${URL_BASE}'`)
+    const previousUserDataPromise = cpfList.map(cpf => axios.get(`${URL_BASE}.json?term=${cpf}`));
+    const previousResolvedPromises = await Promise.all(previousUserDataPromise);
+    const previousList = previousResolvedPromises.map(res => PreviousUserData(res.data));
+    console.log("PREVIOUS DATA");
+    console.log(previousList);
+    console.log("==================");
+    for(const previousData of previousList) {
+        const detailsUrl = `${URL_BASE}?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
+        const response  = await axios.get(detailsUrl);
+        const html = cheerio.load(response.data);
+        console.log("HTML");
+        console.log(html);
+        console.log("==================");
     }
 }
 
-
-
-const sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-execute([]);
-
+execute(['14754473701']);
