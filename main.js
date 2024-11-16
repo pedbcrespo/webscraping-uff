@@ -59,6 +59,3 @@ const PreviousUserData = (resData) => {
 };
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-
-execute(['12345678901'])
