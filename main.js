@@ -4,8 +4,8 @@ import * as cheerio from 'cheerio';
 const URL_BASE = 'https://app.uff.br/transparencia/busca_cadastro';
 
 const PreviousUserData = (resData) => {
-    const {cpf, nome, identificacao} = resData[0].pessoa;
-    return {cpf, nome, identificacao};
+    const {cpf, nome, ididentificacao} = resData[0].pessoa;
+    return {cpf, nome, identificacao: ididentificacao};
 };
 
 export const execute = async (cpfList) => {
