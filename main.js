@@ -65,7 +65,3 @@ const PreviousUserData = (resData) => {
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
-
-let res = await execute(['Pedro de Barros Crespo', '14754473701']);
-
-console.log(res);
