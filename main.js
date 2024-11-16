@@ -24,7 +24,7 @@ export const execute = async (cpfList) => {
 const extractData = async (listData, previousData) => {
     const url = `https://app.uff.br/transparencia/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
 
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url);
 
