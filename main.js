@@ -75,3 +75,24 @@ const PreviousUserData = (resData) => {
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
+
+
+const parseArgs = (args) => {
+    const parsed = {};
+    for (let i = 0; i < args.length; i++) {
+        if (args[i].startsWith('-')) {
+            const key = args[i].replace('-', '');
+            const value = args[i + 1]?.startsWith('-') ? true : args[i + 1];
+            parsed[key] = value || true;
+        }
+    }
+    return parsed;
+};
+
+const args = process.argv.slice(2);
+const parsedArgs = parseArgs(args);
+
+if (parsedArgs.list) {
+    const stringList = parsedArgs.list.split(','); // Divide os valores por vírgula
+    await execute(stringList);
+}
