@@ -5,6 +5,10 @@ Webscraping para coletar dados do site da UFF.
 Este projeto utiliza **Axios** para fazer as requisições e **Puppeteer** para automatizar o processo de navegação e coleta de dados.
 
 ## Como Usar
+Após clonar o repositorio, acessa-lo e executar:
+```bash
+npm install
+```
 Há duas formas de usar o projeto, implementando no arquivo main.js ou pelo terminal.
 
 ### Exemplo de Código
