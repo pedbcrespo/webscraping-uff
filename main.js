@@ -56,16 +56,15 @@ const extractData = async (listData, previousData) => {
 const getPreviousData = async (elementList) => {
     const previousUserDataPromise = elementList.map(elem => {
         let term = elem || '';
-        if (isNaN(parseFloat(elem))) {
+        if (isNaN(parseFloat(elem)))
             term = term.trim().replaceAll(' ', '+');
-        }
         return axios.get(`${URL_BASE}/busca_cadastro.json?term=${term}`);
     });
     const previousResolvedPromises = await Promise.all(previousUserDataPromise);
     const previousList = previousResolvedPromises.map((res, i) => {
         let data = PreviousUserData(res.data);
         if(!data)
-            console.log("DADO INEXISTENTE NO SISTEMA", elementList[i])
+            console.log(`ELEMENTO '${elementList[i]}' NAO ENCONTRADO`);
         return data;
     });
     return previousList.filter(data => data);
