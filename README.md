@@ -9,13 +9,11 @@ Este projeto utiliza **Axios** para fazer as requisições e **Puppeteer** para 
 Basta importar a função `execute` do arquivo `main.js`, passando como parâmetro uma lista de strings, podendo ser tanto uma lista de nomes quanto de CPFs. A função irá retornar os dados coletados do site da UFF relacionados aos CPFs fornecidos.
 
 ### Exemplo de Código
-
 ```javascript
-import { execute } from './main.js';
-
-const resultados = await execute(['Fulano de Tal', '11122233345']);
-
-console.log(resultados); // Exibe os dados coletados
+// dentro do arquivo main.js
+const listaNomesOuCpfs = ['Fulano de Tal', 'Cliclano de Tantas'];
+const resultados = await execute(listaNomesOuCpfs);
+console.log(resultados); // Exibe os dados coletados e cria um arquivo json
 ```
 
 O codigo gera um arquivo json com os dados coletados.
