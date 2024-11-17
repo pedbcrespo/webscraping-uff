@@ -93,6 +93,6 @@ const args = process.argv.slice(2);
 const parsedArgs = parseArgs(args);
 
 if (parsedArgs.list) {
-    const stringList = parsedArgs.list.split(','); // Divide os valores por vírgula
+    const stringList = parsedArgs.list.split(',').map(elem => elem.trim());
     await execute(stringList);
 }
