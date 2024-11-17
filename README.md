@@ -16,3 +16,6 @@ import { execute } from './main.js';
 const resultados = await execute(['Fulano de Tal', '11122233345']);
 
 console.log(resultados); // Exibe os dados coletados
+```
+
+O codigo gera um arquivo json com os dados coletados.
