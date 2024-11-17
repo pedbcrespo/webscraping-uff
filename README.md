@@ -18,12 +18,12 @@ console.log(resultados); // Exibe os dados coletados e cria um arquivo json
 
 Caso não queira acessar o arquivo e implementar os comandos, como alternativa execute no terminal:
 ```bash
-    node main -list "Pedro de Barros Crespo"
+node main -list "Pedro de Barros Crespo"
 ```
 
 lembrar de separar por virgula:
 ```bash
-    node main -list "Pedro de Barros Crespo, Fulano de Tal, Deutrano Não Sei das Quantas"
+node main -list "Pedro de Barros Crespo, Fulano de Tal, Deutrano Não Sei das Quantas"
 ```
 
 ### Detalhe:
