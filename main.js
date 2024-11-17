@@ -1,4 +1,5 @@
 import * as puppeteer from 'puppeteer';
+import * as fs from 'fs';
 import axios from "axios";
 
 const URL_BASE = 'https://app.uff.br/transparencia';
@@ -6,7 +7,7 @@ const URL_BASE = 'https://app.uff.br/transparencia';
 export const execute = async (list) => {
     let listData = [];
     const previousList = await getPreviousData(list);
-    if(previousList.some(data => !data)) {
+    if (previousList.some(data => !data)) {
         console.error("LISTA COM DADOS INVALIDOS", list)
         return [];
     }
@@ -14,11 +15,23 @@ export const execute = async (list) => {
         try {
             listData = await extractData(listData, previousData);
         }
-        catch(error) {
+        catch (error) {
             console.error(error);
         }
     }
+    generateJsonFile(listData);
     return listData;
+}
+
+const generateJsonFile = (listData) => {
+    const jsonData = JSON.stringify(listData, null, 2);
+    fs.writeFile('data.json', jsonData, (err) => {
+        if (err) {
+            console.error("Erro ao criar o arquivo:", err);
+        } else {
+            console.log("Arquivo JSON criado com sucesso!");
+        }
+    });
 }
 
 const extractData = async (listData, previousData) => {
@@ -34,10 +47,10 @@ const extractData = async (listData, previousData) => {
     });
     const userDetails = { Nome: previousData.nome };
     data.forEach((info, i) => {
-        if(i % 2 == 0)
+        if (i % 2 == 0)
             userDetails[info] = null;
         else
-            userDetails[data[i-1]] = info;
+            userDetails[data[i - 1]] = info;
     })
     listData.push(userDetails);
     await browser.close();
@@ -47,7 +60,7 @@ const extractData = async (listData, previousData) => {
 const getPreviousData = async (elementList) => {
     const previousUserDataPromise = elementList.map(elem => {
         let term = elem || '';
-        if(isNaN(parseFloat(elem))) {
+        if (isNaN(parseFloat(elem))) {
             term = term.trim().replaceAll(' ', '+');
         }
         return axios.get(`${URL_BASE}/busca_cadastro.json?term=${term}`);
@@ -58,7 +71,7 @@ const getPreviousData = async (elementList) => {
 }
 
 const PreviousUserData = (resData) => {
-    if(!resData || resData.length === 0) return null;
+    if (!resData || resData.length === 0) return null;
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
