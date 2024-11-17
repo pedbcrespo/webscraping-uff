@@ -27,6 +27,6 @@ node main -list "Pedro de Barros Crespo, Fulano de Tal, Deutrano Não Sei das Qu
 ```
 
 ### Detalhe:
-Se algum dos nomes estiver escrito errado, um erro pode ser gerado e toda a aplicação irá parar para evitar demais problemas.
+Se algum dos nomes estiver escrito errado, um log de erro sera apresentado durante a execução e o dado será descartado.
 
 O codigo gera um arquivo json com os dados coletados.

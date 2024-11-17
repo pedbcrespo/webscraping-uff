@@ -25,7 +25,7 @@ export const execute = async (list) => {
 
 const generateJsonFile = (listData) => {
     const jsonData = JSON.stringify(listData, null, 2);
-    fs.writeFile('data.json', jsonData, (err) => {
+    fs.writeFile('usuarios-uff.json', jsonData, (err) => {
         if (err) {
             console.error("Erro ao criar o arquivo:", err);
         } else {
@@ -66,8 +66,13 @@ const getPreviousData = async (elementList) => {
         return axios.get(`${URL_BASE}/busca_cadastro.json?term=${term}`);
     });
     const previousResolvedPromises = await Promise.all(previousUserDataPromise);
-    const previousList = previousResolvedPromises.map(res => PreviousUserData(res.data));
-    return previousList;
+    const previousList = previousResolvedPromises.map((res, i) => {
+        let data = PreviousUserData(res.data);
+        if(!data)
+            console.log("DADO INEXISTENTE NO SISTEMA", elementList[i])
+        return data;
+    });
+    return previousList.filter(data => data);
 }
 
 const PreviousUserData = (resData) => {
@@ -75,7 +80,6 @@ const PreviousUserData = (resData) => {
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
 };
-
 
 const parseArgs = (args) => {
     const parsed = {};
