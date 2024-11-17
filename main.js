@@ -7,10 +7,6 @@ const URL_BASE = 'https://app.uff.br/transparencia';
 export const execute = async (list) => {
     let listData = [];
     const previousList = await getPreviousData(list);
-    if (previousList.some(data => !data)) {
-        console.error("LISTA COM DADOS INVALIDOS", list)
-        return [];
-    }
     for (const previousData of previousList) {
         try {
             listData = await extractData(listData, previousData);
