@@ -14,7 +14,7 @@ Há duas formas de usar o projeto, implementando no arquivo main.js ou pelo term
 ### Exemplo de Código
 ```javascript
 // dentro do arquivo main.js
-const listaNomesOuCpfs = ['Pedro de Barros Crespo'];
+const listaNomesOuCpfs = ['Pedro de Barros Crespo', 'Savio Carvalho Moraes'];
 const resultados = await execute(listaNomesOuCpfs);
 console.log(resultados); // Exibe os dados coletados e cria um arquivo json
 ```
@@ -26,7 +26,7 @@ node main -list "Pedro de Barros Crespo"
 
 lembrar de separar por virgula:
 ```bash
-node main -list "Pedro de Barros Crespo, Fulano de Tal, Deutrano Não Sei das Quantas"
+node main -list "Pedro de Barros Crespo, Fulano de Tal, Savio Carvalho Moraes"
 ```
 
 ### Detalhe:
