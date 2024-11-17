@@ -5,8 +5,7 @@ Webscraping para coletar dados do site da UFF.
 Este projeto utiliza **Axios** para fazer as requisições e **Puppeteer** para automatizar o processo de navegação e coleta de dados.
 
 ## Como Usar
-
-Basta importar a função `execute` do arquivo `main.js`, passando como parâmetro uma lista de strings, podendo ser tanto uma lista de nomes quanto de CPFs. A função irá retornar os dados coletados do site da UFF relacionados aos CPFs fornecidos.
+Há duas formas de usar o projeto, implementando no arquivo main.js ou pelo terminal.
 
 ### Exemplo de Código
 ```javascript
