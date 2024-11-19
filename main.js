@@ -32,24 +32,41 @@ const generateJsonFile = (listData) => {
 
 const extractData = async (listData, previousData) => {
     const url = `${URL_BASE}/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
-
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url);
 
-    const data = await page.evaluate(() => {
-        const tds = Array.from(document.querySelectorAll('#cadastro-pessoal-ALUNO td'));
-        return tds.map(td => td.textContent.trim());
-    });
-    const userDetails = { Nome: previousData.nome };
-    data.forEach((info, i) => {
-        if (i % 2 == 0)
-            userDetails[info] = null;
-        else
-            userDetails[data[i - 1]] = info;
+    const listUserDetails = await page.evaluate(() => {
+        const tables = document.querySelectorAll('table#cadastro-pessoal-ALUNO');
+        const allTablesData = [];
+        tables.forEach((table) => {
+            const rows = table.querySelectorAll('tbody tr');
+            const tableData = {};
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll('td');
+                const key = cells[0].textContent.trim();
+                const value = cells[1].textContent.trim();
+                tableData[key] = value;
+            });
+            allTablesData.push(tableData);
+        });
+        return allTablesData;
     })
-    listData.push(userDetails);
     await browser.close();
+    return handleExtractedData(listData, listUserDetails, previousData);
+}
+
+const handleExtractedData = (listData, listUserDetails, previousData) => {
+    let userDetails = { Nome: previousData.nome };
+    const mostCurrentData = listUserDetails.find(user => {
+        const isGraduated = user.Status.toLowerCase().includes('formado');
+        const isActived = user.Status.toLowerCase().includes('ativo');
+        return isGraduated || isActived;
+    });
+    if(!mostCurrentData)
+        userDetails = { ...userDetails, ...listUserDetails[0]};
+    userDetails = { ...userDetails, ...mostCurrentData };
+    listData.push(userDetails);
     return listData;
 }
 
@@ -63,7 +80,7 @@ const getPreviousData = async (elementList) => {
     const previousResolvedPromises = await Promise.all(previousUserDataPromise);
     const previousList = previousResolvedPromises.map((res, i) => {
         let data = PreviousUserData(res.data);
-        if(!data)
+        if (!data)
             console.log(`ELEMENTO '${elementList[i]}' NAO ENCONTRADO`);
         return data;
     });
