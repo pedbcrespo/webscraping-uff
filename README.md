@@ -29,6 +29,24 @@ lembrar de separar por virgula:
 node main -list "Pedro de Barros Crespo, Fulano de Tal, Savio Carvalho Moraes"
 ```
 
+Outra alternativa pelo terminal é passar um arquivo texto:
+
+* Exemplo de arquivo texto 1 (nomes.txt):
+```text
+Pedro de Barros Crespo, Fulano de Tal, Savio Carvalho Moraes
+```
+
+* Exemplo de arquivo texto 2 (nomes.txt):
+```text
+Pedro de Barros Crespo
+Fulano de Tal
+Savio Carvalho Moraes
+```
+
+para executar, use o comando seguindo o exemplo:
+```bash
+node main -file "nomes.txt"
+```
 ### Detalhe:
 Se algum dos nomes estiver escrito errado, um log de erro sera apresentado durante a execução e o dado será descartado.
 

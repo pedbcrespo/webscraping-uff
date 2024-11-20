@@ -1,10 +1,12 @@
 import * as puppeteer from 'puppeteer';
 import * as fs from 'fs';
+import * as fsAsync from 'fs/promises';
 import axios from "axios";
 
 const URL_BASE = 'https://app.uff.br/transparencia';
 
 export const execute = async (list) => {
+    if(!list || list.length === 0) return [];
     let listData = [];
     const previousList = await getPreviousData(list);
     for (const previousData of previousList) {
@@ -93,6 +95,17 @@ const PreviousUserData = (resData) => {
     return { cpf, nome, identificacao: ididentificacao };
 };
 
+const readFileToList = async (filePath) => {
+    try {
+        const fileContent = await fsAsync.readFile(filePath, 'utf-8');
+        const list = fileContent.split(/[\n,]/).map(line => line.trim()).filter(line => line);
+        return list;
+    } catch (error) {
+        console.error(`Erro ao ler o arquivo: ${error.message}`);
+        return [];
+    }
+};
+
 const parseArgs = (args) => {
     const parsed = {};
     for (let i = 0; i < args.length; i++) {
@@ -108,7 +121,28 @@ const parseArgs = (args) => {
 const args = process.argv.slice(2);
 const parsedArgs = parseArgs(args);
 
-if (parsedArgs.list) {
-    const stringList = parsedArgs.list.split(',').map(elem => elem.trim());
-    await execute(stringList);
-}
+const flags = [
+    {
+        key: 'list',
+        execute: async (parsedArgs) => {
+            const stringList = parsedArgs.list.split(',').map(elem => elem.trim());
+            return await execute(stringList);
+        }
+    },
+    {
+        key: 'file',
+        execute: async (parsedArgs) => {
+            const stringList = await readFileToList(parsedArgs.file);
+            return await execute(stringList);
+        }
+    }
+];
+
+const keyList = Object.keys(parsedArgs);
+const operationByFlag = keyList.length > 0 ? flags.find(flag => flag.key === keyList[0]): null;
+if(operationByFlag)
+    await operationByFlag.execute(parsedArgs);
+
+
+
+    
