@@ -1,7 +1,6 @@
 import * as puppeteer from 'puppeteer';
-import * as fs from 'fs';
-import * as fsAsync from 'fs/promises';
 import axios from "axios";
+import { generateJsonFile, generateWebscraping, parseArgs, readFileToList } from './utils.js';
 
 const URL_BASE = 'https://app.uff.br/transparencia';
 
@@ -21,20 +20,10 @@ export const execute = async (list) => {
     return listData;
 }
 
-const generateJsonFile = (listData) => {
-    const jsonData = JSON.stringify(listData, null, 2);
-    fs.writeFile('usuarios-uff.json', jsonData, (err) => {
-        if (err) {
-            console.error("Erro ao criar o arquivo:", err);
-        } else {
-            console.log("Arquivo JSON criado com sucesso!");
-        }
-    });
-}
-
 const extractData = async (listData, previousData) => {
     const url = `${URL_BASE}/busca_cadastro_pessoa?cpf=${previousData.cpf}&ididentificacao=${previousData.identificacao}&tipo=`;
-    const browser = await puppeteer.launch({ headless: true });
+    // const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch(generateWebscraping());
     const page = await browser.newPage();
     await page.goto(url);
 
@@ -93,29 +82,6 @@ const PreviousUserData = (resData) => {
     if (!resData || resData.length === 0) return null;
     const { cpf, nome, ididentificacao } = resData[0].pessoa;
     return { cpf, nome, identificacao: ididentificacao };
-};
-
-const readFileToList = async (filePath) => {
-    try {
-        const fileContent = await fsAsync.readFile(filePath, 'utf-8');
-        const list = fileContent.split(/[\n,]/).map(line => line.trim()).filter(line => line);
-        return list;
-    } catch (error) {
-        console.error(`Erro ao ler o arquivo: ${error.message}`);
-        return [];
-    }
-};
-
-const parseArgs = (args) => {
-    const parsed = {};
-    for (let i = 0; i < args.length; i++) {
-        if (args[i].startsWith('-')) {
-            const key = args[i].replace('-', '');
-            const value = args[i + 1]?.startsWith('-') ? true : args[i + 1];
-            parsed[key] = value || true;
-        }
-    }
-    return parsed;
 };
 
 const args = process.argv.slice(2);
