@@ -10,12 +10,13 @@ Após clonar o repositorio, acessa-lo e executar:
 npm install
 ```
 Há duas formas de usar o projeto, implementando no arquivo main.js ou pelo terminal.
+Os parametros de busca podem ser: Nome, Cpf e Matricula SIAPE.
 
 ### Exemplo de Código
 ```javascript
 // dentro do arquivo main.js
-const listaNomesOuCpfs = ['Pedro de Barros Crespo', 'Savio Carvalho Moraes'];
-const resultados = await execute(listaNomesOuCpfs);
+const listaNomesCpfOuMatriculaSiape = ['Pedro de Barros Crespo', 'Savio Carvalho Moraes'];
+const resultados = await execute(listaNomesCpfOuMatriculaSiape);
 console.log(resultados); // Exibe os dados coletados e cria um arquivo json
 ```
 
@@ -48,7 +49,6 @@ para executar, use o comando seguindo o exemplo:
 node main -file "nomes.txt"
 ```
 
-## IMPORTANTE:
 Para buscar dados referentes á Professores e técnicos (servidores públicos), necessario usar flags especificas como no exemplo:
 ```bash
 node main -siape "numero_do_siape1, numero_do_siape2"
@@ -57,7 +57,6 @@ node main -siape "numero_do_siape1, numero_do_siape2"
 ```bash
 node main -siapefile "siape_arquivo_texto.txt"
 ```
-
 
 ### Detalhe:
 Se algum dos nomes estiver escrito errado, um log de erro sera apresentado durante a execução e o dado será descartado.

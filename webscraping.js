@@ -1,28 +1,39 @@
 import * as puppeteer from 'puppeteer';
 import axios from "axios";
-import { generateJsonFile, generateWebscraping, parseArgs, readFileToList } from './utils.js';
+import { generateJsonFile, generateWebscraping, validateNormalData } from './utils.js';
 
 const URL_BASE = 'https://app.uff.br/transparencia';
 
 export const execute = async (list, isSiape=false) => {
     if(!list || list.length === 0) return [];
-    let listData = isSiape? await extractDataSiape(list) : await extractDataNameOrCpf(list);
+    const normalList = [];
+    const siapeList = [];
+    list.forEach(data => {
+        const isNormalData = validateNormalData(data);
+        if(isNormalData)
+            normalList.push(data);
+        else
+            siapeList.push(data);
+    })
+    const listData = (await extractDataSiape(siapeList)).concat(await extractDataNameOrCpf(normalList));
     generateJsonFile(listData);
     return listData;
 }
 
 const extractDataSiape = async (listSiapeId) => {
+    if(listSiapeId.length === 0) return [];
     let listData = [];
     for(const siapeId of listSiapeId) {
         const url = `${URL_BASE}/busca_cadastro_por_siape?siape=${siapeId}&ididentificacao=`;
         const listUserDetails = await extractData(url, true);
-        const mostCurrentData = handleExtractedData(listUserDetails, siapeId, true);
+        const mostCurrentData = handleExtractedData(listUserDetails, siapeId);
         listData.push(mostCurrentData);
     }
     return listData;
 }
 
 const extractDataNameOrCpf = async (listCpfOrName) => {
+    if(listCpfOrName.length === 0) return [];
     let listData = [];
     const previousList = await getPreviousData(listCpfOrName);
     for (const previousData of previousList) {
@@ -37,44 +48,6 @@ const extractDataNameOrCpf = async (listCpfOrName) => {
         }
     }
     return listData;
-}
-
-const extractData = async (url, isSiape = false) => {
-    const browser = await puppeteer.launch(generateWebscraping());
-    const page = await browser.newPage();
-    await page.goto(url);
-    
-    const listUserDetails = await page.evaluate((isSiape) => {
-        const htmlTag = 'table#cadastro-pessoal-' + (isSiape ? 'DOCENTE' : 'ALUNO');
-        const tables = document.querySelectorAll(htmlTag);
-        const allTablesData = [];
-        tables.forEach((table) => {
-            const rows = table.querySelectorAll('tbody tr');
-            const tableData = {};
-            rows.forEach((row) => {
-                const cells = row.querySelectorAll('td');
-                const key = cells[0].textContent.trim();
-                const value = cells[1].textContent.trim();
-                tableData[key] = value;
-            });
-            allTablesData.push(tableData);
-        });
-        return allTablesData;
-    }, isSiape);
-    
-    await browser.close();
-    return listUserDetails;
-}
-
-const handleExtractedData = (listUserDetails, identification, isSiape) => {
-    const key = isSiape? 'Situação' : 'Status';
-    let userDetails = { 'Usuario:': identification };
-    const mostCurrentData = listUserDetails.find((user, i) => {
-        const isGraduated = user[key].toLowerCase().includes('formado');
-        const isActived = user[key].toLowerCase().includes('ativo');
-        return isGraduated || isActived;
-    });
-    return mostCurrentData? { ...userDetails, ...mostCurrentData } : { ...userDetails, ...listUserDetails[0]};
 }
 
 const getPreviousData = async (elementList) => {
@@ -92,6 +65,45 @@ const getPreviousData = async (elementList) => {
         return data;
     });
     return previousList.filter(data => data);
+}
+
+const extractData = async (url) => {
+    const browser = await puppeteer.launch(generateWebscraping());
+    const page = await browser.newPage();
+    await page.goto(url);
+
+    const listUserDetails = await page.evaluate(() => {
+        const userDetailsFromTables = []
+        const tables = document.querySelectorAll('table[id^="cadastro-pessoal-"]');
+        tables.forEach(table => {
+            const { id }= table;
+            const tableData = { tableId: id };
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll('td');
+                const key = cells[0].textContent.trim();
+                const value = cells[1].textContent.trim();
+                tableData[key] = value;
+            });
+            userDetailsFromTables.push(tableData);
+        });
+        return userDetailsFromTables;
+    });
+    await browser.close();
+    return listUserDetails;
+};
+
+const handleExtractedData = (listUserDetails, identification) => {
+    let userDetails = { 'Usuario:': identification };
+    const mostCurrentData = listUserDetails.find(user => {
+        const splitedTableId = user.tableId.split('-');
+        const typeTable = splitedTableId[splitedTableId.length - 1];
+        const key = typeTable === 'DOCENTE'? 'Situação': 'Status';
+        const isGraduated = user[key].toLowerCase().includes('formado');
+        const isActived = user[key].toLowerCase().includes('ativo');
+        return isGraduated || isActived;
+    });
+    return mostCurrentData? { ...userDetails, ...mostCurrentData } : { ...userDetails, ...listUserDetails[0]};
 }
 
 const PreviousUserData = (resData) => {

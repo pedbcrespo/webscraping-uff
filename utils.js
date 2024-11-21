@@ -12,9 +12,12 @@ const OPERATIONA_SYSTEM = {
     sunos: 'SunOS',
 }
 
+const TYPE_ID = {
+    siape: {name: 'siape', typeTable: 'DOCENTE'},
+    normal: {name: 'normal', typeTable: 'ALUNO'},
+}
 
 export const generateWebscraping = () => {
-    // const params = { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] };
     const params = { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] };
     if(detectOperatingSystem() === OPERATIONA_SYSTEM.darwin){
         params['executablePath'] = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -56,6 +59,11 @@ export const generateJsonFile = (listData) => {
     });
 }
 
+export const validateNormalData = (data) => {
+    const isName = isNaN(parseFloat(data));
+    const isCpf = !isName && data.length === 11;
+    return isName || isCpf;
+}
 
 const detectOperatingSystem = () => {
     const platform = os.platform();
