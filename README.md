@@ -49,15 +49,6 @@ para executar, use o comando seguindo o exemplo:
 node main -file "nomes.txt"
 ```
 
-Para buscar dados referentes á Professores e técnicos (servidores públicos), necessario usar flags especificas como no exemplo:
-```bash
-node main -siape "numero_do_siape1, numero_do_siape2"
-```
-
-```bash
-node main -siapefile "siape_arquivo_texto.txt"
-```
-
 ### Detalhe:
 Se algum dos nomes estiver escrito errado, um log de erro sera apresentado durante a execução e o dado será descartado.
 
