@@ -22,12 +22,12 @@ console.log(resultados); // Exibe os dados coletados e cria um arquivo json
 
 Caso não queira acessar o arquivo e implementar os comandos, como alternativa execute no terminal:
 ```bash
-node main -list "Pedro de Barros Crespo"
+npm start -- -list "Pedro de Barros Crespo"
 ```
 
 lembrar de separar por virgula:
 ```bash
-node main -list "Pedro de Barros Crespo, Fulano de Tal, Savio Carvalho Moraes"
+npm start -- -list "Pedro de Barros Crespo, Fulano de Tal, Savio Carvalho Moraes"
 ```
 
 Outra alternativa pelo terminal é passar um arquivo texto:
@@ -46,7 +46,7 @@ Savio Carvalho Moraes
 
 para executar, use o comando seguindo o exemplo:
 ```bash
-node main -file "nomes.txt"
+npm start -- -file "nomes.txt"
 ```
 
 ### Detalhe:

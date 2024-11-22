@@ -25,7 +25,3 @@ const keyList = Object.keys(parsedArgs);
 const operationByFlag = keyList.length > 0 ? flags.find(flag => flag.key === keyList[0]): null;
 if(operationByFlag)
     await operationByFlag.execute(parsedArgs);
-
-
-
-    
