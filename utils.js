@@ -1,6 +1,7 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fsAsync from 'fs/promises';
+import { logger } from './logger.js';
 
 const OPERATIONA_SYSTEM = {
     win32: 'Windows',
@@ -31,7 +32,7 @@ export const readFileToList = async (filePath) => {
         const list = fileContent.split(/[\n,]/).map(line => line.trim()).filter(line => line);
         return list;
     } catch (error) {
-        console.error(`Erro ao ler o arquivo: ${error.message}`);
+        logger.error(`Erro ao ler o arquivo: ${error.message}`);
         return [];
     }
 };
@@ -49,12 +50,13 @@ export const parseArgs = (args) => {
 };
 
 export const generateJsonFile = (listData) => {
+    logger.info('Gerando Arquivo JSON');
     const jsonData = JSON.stringify(listData, null, 2);
     fs.writeFile('usuarios-uff.json', jsonData, (err) => {
         if (err) {
-            console.error("Erro ao criar o arquivo:", err);
+            logger.error("Erro ao criar o arquivo:", err);
         } else {
-            console.log("Arquivo JSON criado com sucesso!");
+            logger.info("Arquivo JSON criado com sucesso!");
         }
     });
 }
