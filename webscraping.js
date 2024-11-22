@@ -129,7 +129,9 @@ const handleExtractedData = (listUserDetails, identification) => {
         const isActived = user[key].toLowerCase().includes('ativo');
         return isGraduated || isActived;
     });
-    return mostCurrentData ? { ...userDetails, ...mostCurrentData } : { ...userDetails, ...listUserDetails[0] };
+    userDetails = mostCurrentData ? { ...userDetails, ...mostCurrentData } : { ...userDetails, ...listUserDetails[0] };
+    delete userDetails.tableId;
+    return userDetails;
 }
 
 const PreviousUserData = (resData) => {

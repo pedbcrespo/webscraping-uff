@@ -19,20 +19,6 @@ const flags = [
             return await execute(stringList);
         }
     },
-    {
-        key: 'siape',
-        execute: async (parsedArgs) => {
-            const stringList = parsedArgs.siape.split(',').map(elem => elem.trim());
-            return await execute(stringList, true);
-        }
-    },
-    {
-        key: 'siapefile',
-        execute: async (parsedArgs) => {
-            const stringList = await readFileToList(parsedArgs.file);
-            return await execute(stringList, true);
-        }
-    },
 ];
 
 const keyList = Object.keys(parsedArgs);
