@@ -52,4 +52,4 @@ npm start -- -file "nomes.txt"
 ### Detalhe:
 Se algum dos nomes estiver escrito errado, um log de erro sera apresentado durante a execução e o dado será descartado.
 
-O codigo gera um arquivo json com os dados coletados.
+O codigo gera um arquivo json com os dados coletados
