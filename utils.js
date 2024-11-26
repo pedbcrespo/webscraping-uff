@@ -67,6 +67,14 @@ export const validateNormalData = (data) => {
     return isName || isCpf;
 }
 
+export const getNameFromHtml = (textHtml) => {
+    const splitedHead = textHtml.split('</head>')[0];
+    const dotSplit = splitedHead.split('.');
+    const htmlPart = dotSplit[2];
+    const insideTextSplited = htmlPart.split('"');
+    return insideTextSplited[1].replace('-', '').trim();
+}
+
 const detectOperatingSystem = () => {
     const platform = os.platform();
     const currentOperationalSystem = OPERATIONA_SYSTEM[platform];

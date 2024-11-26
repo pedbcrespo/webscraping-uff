@@ -1,6 +1,6 @@
 import * as puppeteer from 'puppeteer';
 import axios from "axios";
-import { generateJsonFile, generateWebscraping, validateNormalData } from './utils.js';
+import { generateJsonFile, generateWebscraping, getNameFromHtml, validateNormalData } from './utils.js';
 import { getProgressBar, logger } from './logger.js';
 
 const URL_BASE = 'https://app.uff.br/transparencia';
@@ -93,13 +93,13 @@ const getPreviousData = async (elementList) => {
     return previousList.filter(data => data);
 }
 
-const extractData = async (url) => {
+const extractData = async (url, isSiape=false) => {
     const browser = await puppeteer.launch(generateWebscraping());
     const page = await browser.newPage();
     await page.goto(url);
 
     const listUserDetails = await page.evaluate(() => {
-        const userDetailsFromTables = []
+        const userDetailsFromTables = [];
         const tables = document.querySelectorAll('table[id^="cadastro-pessoal-"]');
         tables.forEach(table => {
             const { id } = table;
@@ -115,12 +115,21 @@ const extractData = async (url) => {
         });
         return userDetailsFromTables;
     });
+
+    if(isSiape) {
+        const textHtml = await page.content();
+        const userName = getNameFromHtml(textHtml);
+        listUserDetails.forEach(details => {
+            details.Usuario = userName;
+        });
+    }
+
     await browser.close();
     return listUserDetails;
 };
 
 const handleExtractedData = (listUserDetails, identification) => {
-    let userDetails = { 'Usuario:': identification };
+    let userDetails = !listUserDetails[0].Usuario? { 'Usuario:': identification } : {};
     const mostCurrentData = listUserDetails.find(user => {
         const splitedTableId = user.tableId.split('-');
         const typeTable = splitedTableId[splitedTableId.length - 1];
